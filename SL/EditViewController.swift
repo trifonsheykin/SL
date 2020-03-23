@@ -23,6 +23,7 @@ class EditViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor(named: "Color")
         key = keyList[myIndex]
         editText.text = key.keyTitle
         tvIpAddress.text = "Lock IP-address: " + key.ipAddress!
@@ -31,8 +32,14 @@ class EditViewController: UIViewController {
         tvStopTime.text = "Stop time: " + accessTimeByteToStr(bytes: key.stopDoorTime!)
         if key.acActivated == 0 {
             tvActivated.text = "Key is not activated"
-        }else{
+        }else if key.acActivated == 1{
             tvActivated.text = "Key is activated"
+        }else if key.acActivated == 2{
+            tvActivated.text = "Main to be activated"
+        }else if key.acActivated == 3{
+            tvActivated.text = "Waiting main"
+        }else if key.acActivated == 4{
+            tvActivated.text = "Main activated"
         }
         // Do any additional setup after loading the view.
     }

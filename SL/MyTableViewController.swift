@@ -159,7 +159,7 @@ class MyTableViewController: UITableViewController, NFCNDEFReaderSessionDelegate
     }
     
     func getWiFiSSID() -> String! {
-        return currentNetworkInfos?.first!.ssid
+        return currentNetworkInfos?.first?.ssid ?? "no SSID"
     }
     
     
@@ -215,7 +215,7 @@ class MyTableViewController: UITableViewController, NFCNDEFReaderSessionDelegate
     
     
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-     
+        
         let key = keyList[indexPath.row]
         print(key)
         let open = UIContextualAction(style: .normal, title: "Open") { (action, view, nil) in
@@ -255,13 +255,20 @@ class MyTableViewController: UITableViewController, NFCNDEFReaderSessionDelegate
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         let key: Key
         key = keyList[indexPath.row]
-        cell.textLabel?.text = "\(key.keyTitle!): " + accessTimeByteToStr(bytes: key.startDoorTime!) +
-        " - " + accessTimeByteToStr(bytes: key.stopDoorTime!)
-        if key.acActivated == 0 {
-            cell.backgroundColor = #colorLiteral(red: 0.929388709, green: 0.9385905774, blue: 0.9385905774, alpha: 1)
-        }else{
-            cell.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        if key.acActivated == 0{
+            cell.textLabel?.text = "\(key.keyTitle!) activate before: " + accessTimeByteToStr(bytes: key.stopDoorTime!)
+        }else if key.acActivated == 1{
+            cell.textLabel?.text = "\(key.keyTitle!) valid thru: " + accessTimeByteToStr(bytes: key.stopDoorTime!)
+        }else if key.acActivated == 2{
+            cell.textLabel?.text = "\(key.keyTitle!) activate before: " + accessTimeByteToStr(bytes: key.stopDoorTime!)
+        }else if key.acActivated == 3{
+            cell.textLabel?.text = "\(key.keyTitle!) waiting for activation."
+        }else if key.acActivated == 4{
+            cell.textLabel?.text = "\(key.keyTitle!) activated. No time limit"
         }
+        
+        
+       
         
         //cell.detailTextLabel?.text =
         return cell

@@ -11,14 +11,14 @@ import SQLite
 import CryptoSwift
 
 class SocketManager: NSObject, StreamDelegate{
-    
+
     var readStream: Unmanaged<CFReadStream>?
     var writeStream: Unmanaged<CFWriteStream>?
     var inputStream: InputStream?
     var outputStream: OutputStream?
     var messages = [AnyHashable]()
     weak var uiPresenter :PresentersProtocol!
-    
+    var pass: [UInt8]?
     var myContext: UIViewController?
     init(with presenter:PresentersProtocol){
         
@@ -191,6 +191,7 @@ class SocketManager: NSObject, StreamDelegate{
         print("Start interaction")
         myContext = context
         if ssid == nil {return false}
+        
         if key.accessPointSsid!.count == 0 || key.accessPointSsid == ssid {
             connectWith(socket: socket)
             globalSSID = ssid
@@ -200,10 +201,15 @@ class SocketManager: NSObject, StreamDelegate{
             }catch{
                 print("No doorId")
             }
+            if globalKey?.acActivated == 3{
+                return false
+            }
             var nonce = makeRandomArray(16)
-            nonce[0] = UInt8(key.userTag!)
+            let usertag: Int64 = globalKey!.userTag ?? 0
+            nonce[0] = UInt8(usertag)
             XORcheck = xorCalc(input: nonce)
             initVectorRX = nonce
+            
             outputStream?.write(nonce, maxLength: nonce.count)
             print("Send nonce:")
             print(nonce)
@@ -228,12 +234,16 @@ class SocketManager: NSObject, StreamDelegate{
             }
         }else if dialogStage == 2 {
             print("Dialog stage 2")
-            saveDataToDb(newAes: getNewAes(cipher: message))
+            if globalKey?.acActivated == 0 || globalKey?.acActivated == 1 || globalKey?.acActivated == 2{
+                 saveDataToDb(newAes: getNewAes(cipher: message))
+            }
+           
             dialogStage = 3
         }
         
 
     }
+ 
     
     func encryptCommand(input: [UInt8]) -> [UInt8]!{
         initVectorTX = input
@@ -255,7 +265,7 @@ class SocketManager: NSObject, StreamDelegate{
                 print((globalKey?.aesKey!.bytes)!)
                 initVectorRX = [UInt8](txData[32..<48])
                 return txData
-            }else{
+            }else if globalKey?.acActivated == 1{
                 print("Key is activated. DOOR_OPEN_MSG")
                 var plaintext: [UInt8] = [UInt8](repeating: 0, count: 1)
                 plaintext[0] = 5//MESSAGE TYPE: DOOR_OPEN_MSG = 5;//1
@@ -269,6 +279,42 @@ class SocketManager: NSObject, StreamDelegate{
                 print((globalKey?.aesKey!.bytes)!)
                 initVectorRX = txData
                 return txData
+            }else if globalKey?.acActivated == 2{
+                print("Key is main. NEW_SUPER_REG")
+                var plaintext: [UInt8] = [UInt8](repeating: 0, count: 1)
+                plaintext[0] = 12//MESSAGE TYPE: NEW_SUPER_REG 12                             1
+                plaintext.append(xorCalc(input: decryptedData!))     //XOR                    1
+                plaintext += (globalKey?.userId!.bytes)!   //((globalKey?.userId!.bytes)!)    4
+                plaintext += (globalKey?.acSecretWord!.bytes)!//                             16
+                plaintext += (globalKey?.doorIdString!.fromBase64() ?? nil)!//                4
+                plaintext.append(contentsOf: [0,0,0,0,0,0])
+                XORcheck = xorCalc(input: plaintext);
+                let txData: [UInt8] = encrypt(data: plaintext, initVector: initVectorTX, aesKey: (globalKey?.aesKey!.bytes)!)
+                print("current AES:")
+                print((globalKey?.aesKey!.bytes)!)
+                initVectorRX = [UInt8](txData[16..<32])
+                return txData
+                
+            }else if globalKey?.acActivated == 4{
+                print("Key main is activated. OPEN_SUPER")
+                let pass = (globalKey?.acSecretWord!.bytes)!//
+                var plaintext: [UInt8] = [UInt8](repeating: 0, count: 1)
+                plaintext[0] = 13//MESSAGE TYPE: OPEN_SUPER  13                 1
+                plaintext.append(xorCalc(input: decryptedData!))//              1
+                plaintext.append(contentsOf: [0xBE, 0xEF])//superId             2
+                plaintext += (globalKey?.doorIdString!.fromBase64() ?? nil)!//  4
+                plaintext += pass//
+                XORcheck = xorCalc(input: plaintext);
+                let txData: [UInt8] = encrypt(data: plaintext, initVector: initVectorTX, aesKey: (globalKey?.aesKey!.bytes)!)
+                print("current AES:")
+                print((globalKey?.aesKey!.bytes)!)
+                initVectorRX = txData
+                return txData
+            }else{
+                errorHandle(message: "ERROR 89".bytes as [UInt8])
+                let out:[UInt8] = [UInt8](repeating: 0, count: 1)
+                return out
+                
             }
         }else{
             errorHandle(message: "ERROR 06".bytes as [UInt8])
@@ -282,55 +328,133 @@ class SocketManager: NSObject, StreamDelegate{
     func getNewAes(cipher: [UInt8]) -> [UInt8]!{
         print("getting new AES from encrypted message:")
         print(cipher)
-        let decryptedData: [UInt8] = decrypt(data: cipher, initVector: initVectorRX, aesKey: (globalKey?.aesKey!.bytes)!)
-        print("decryption done")
-        print(decryptedData)
-        if(decryptedData[1] == XORcheck){
-            print("new AES:")
-            print([UInt8](decryptedData[2..<34]))
-            return [UInt8](decryptedData[2..<34])
-        }else{
-            errorHandle(message: "ERROR 06".bytes as [UInt8])
+        if globalKey?.acActivated == 0 || globalKey?.acActivated == 1 {
+            let decryptedData: [UInt8] = decrypt(data: cipher, initVector: initVectorRX, aesKey: (globalKey?.aesKey!.bytes)!)
+            print("decryption done")
+            print(decryptedData)
+            if(decryptedData[1] == XORcheck){
+                print("new AES:")
+                print([UInt8](decryptedData[2..<34]))
+                return [UInt8](decryptedData[2..<34])
+            }else{
+                errorHandle(message: "ERROR 06".bytes as [UInt8])
+            }
+        }else if globalKey?.acActivated == 2 {
+            let decryptedData: [UInt8] = decrypt(data: cipher, initVector: initVectorRX, aesKey: (globalKey?.aesKey!.bytes)!)
+            if(decryptedData[1] == XORcheck){
+                print("new AES:")
+                print([UInt8](decryptedData[2..<34]))
+                pass = [UInt8] (decryptedData[34..<42])
+                //TODO implement reply print to user
+                return [UInt8](decryptedData[2..<34])
+            }else{
+                errorHandle(message: "ERROR 06".bytes as [UInt8])
+            }
+                       
+        }else if globalKey?.acActivated == 4 {
+            
+            //TODO implement reply print to user
+                       
         }
+        
         return nil
     }
     
     func saveDataToDb(newAes: [UInt8]){
         print("saving new AES to DB")
-        globalKey?.aesKey = Blob(bytes: newAes)
-        if globalKey?.acActivated == 0 {
-            globalKey?.acActivated = 1
-            globalKey?.acSecretWord = Blob(bytes: [0])
-            globalKey?.accessPointSsid = globalSSID
-        }
         
-        do {
-            try KeyDataHelper.update(item: globalKey!)
-            print("Save key to self")
-        }catch{}
-        
-        let broDoorId = (globalKey?.doorIdOfBro)!
-        do {
-            var key = try KeyDataHelper.findByDoorId(doorId: broDoorId)
-            if key != nil {
-                key?.aesKey = Blob(bytes: newAes)
-                if key?.acActivated == 0 {
-                    key?.acActivated = 1
-                    key?.acSecretWord = Blob(bytes: [0])
-                    key?.accessPointSsid = globalSSID
+        if globalKey?.acActivated == 0 || globalKey?.acActivated == 1 {
+            globalKey?.aesKey = Blob(bytes: newAes)
+            if globalKey?.acActivated == 0 {
+                globalKey?.acActivated = 1
+                globalKey?.acSecretWord = Blob(bytes: [0])
+                globalKey?.accessPointSsid = globalSSID
+            }
+            
+            do {
+                try KeyDataHelper.update(item: globalKey!)
+                print("Save key to self")
+            }catch{}
+            
+            let broDoorId = (globalKey?.doorIdOfBro)!
+            do {
+                var key = try KeyDataHelper.findByDoorId(doorId: broDoorId)
+                if key != nil {
+                    key?.aesKey = Blob(bytes: newAes)
+                    if key?.acActivated == 0 {
+                        key?.acActivated = 1
+                        key?.acSecretWord = Blob(bytes: [0])
+                        key?.accessPointSsid = globalSSID
+                    }
+                    do {
+                        try KeyDataHelper.update(item: key!)
+                        print("Save key to bro")
+                    }catch{}
+                    
+                    
                 }
-                do {
-                    try KeyDataHelper.update(item: key!)
-                    print("Save key to bro")
-                }catch{}
                 
                 
+            }catch{
+                print("No bro doorId")
+            }
+        }else if globalKey?.acActivated == 2 {
+            globalKey?.aesKey = Blob(bytes: newAes)
+            globalKey?.acActivated = 4
+            globalKey?.acSecretWord = Blob(bytes: pass!)
+            globalKey?.accessPointSsid = globalSSID
+            globalKey?.userTag = 10
+            
+            do {
+                try KeyDataHelper.update(item: globalKey!)
+                print("Save key to self")
+            }catch{}
+            
+            let broDoorId = (globalKey?.doorIdOfBro)!
+            do {
+                var key = try KeyDataHelper.findByDoorId(doorId: broDoorId)
+                if key != nil {
+                    key?.aesKey = Blob(bytes: newAes)
+                    key?.acActivated = 4
+                    key?.acSecretWord = Blob(bytes: pass!)
+                    key?.accessPointSsid = globalSSID
+                    key?.userTag = 10
+                    do {
+                        try KeyDataHelper.update(item: key!)
+                        print("Save key to bro")
+                    }catch{}
+                    
+                }
+            }catch{
+                print("No bro doorId")
             }
             
             
-        }catch{
-            print("No bro doorId")
+            do {
+                
+                var key = try KeyDataHelper.findByAcActivated(ac: 3)
+                while(key != nil){
+                    key?.aesKey = Blob(bytes: newAes)
+                    key?.acActivated = 4
+                    key?.acSecretWord = Blob(bytes: pass!)
+                    key?.accessPointSsid = globalSSID
+                    key?.userTag = 10
+                    do {
+                        try KeyDataHelper.update(item: key!)
+                        print("Save key to bro")
+                    }catch{}
+                    key = try KeyDataHelper.findByAcActivated(ac: 3)
+                }
+            }catch{
+                print("No bro doorId")
+            }
+            
+        
+        }else if globalKey?.acActivated == 4 {
+                              
         }
+        
+   
         
         
     }

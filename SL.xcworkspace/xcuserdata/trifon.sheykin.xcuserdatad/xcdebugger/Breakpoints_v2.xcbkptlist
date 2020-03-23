@@ -1,5 +1,101 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Bucket
+   uuid = "14718FFB-FD8A-4F6F-949F-84A9DD8A3892"
    type = "0"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2DF10CAE-7A53-4302-913D-6A70945BA0AB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SL/SocketManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "66"
+            endingLineNumber = "66"
+            landmarkName = "stream(_:handle:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "2DF10CAE-7A53-4302-913D-6A70945BA0AB - 426fc26b48ab56b1"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SmartLock.SocketManager.stream(_: __C.NSStream, handle: __C.NSStreamEvent) -&gt; ()"
+                  moduleName = "SmartLock"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/trifon.sheykin/Documents/XCode/SL/SL/SocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "628">
+               </Location>
+               <Location
+                  uuid = "2DF10CAE-7A53-4302-913D-6A70945BA0AB - 426fc26b48ab56b1"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SmartLock.SocketManager.stream(_: __C.NSStream, handle: __C.NSStreamEvent) -&gt; ()"
+                  moduleName = "SmartLock"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/trifon.sheykin/Documents/XCode/SL/SL/SocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "1056">
+               </Location>
+               <Location
+                  uuid = "2DF10CAE-7A53-4302-913D-6A70945BA0AB - 426fc26b48ab56b1"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SmartLock.SocketManager.stream(_: __C.NSStream, handle: __C.NSStreamEvent) -&gt; ()"
+                  moduleName = "SmartLock"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/trifon.sheykin/Documents/XCode/SL/SL/SocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "3212">
+               </Location>
+               <Location
+                  uuid = "2DF10CAE-7A53-4302-913D-6A70945BA0AB - 426fc26b48ab56b1"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SmartLock.SocketManager.stream(_: __C.NSStream, handle: __C.NSStreamEvent) -&gt; ()"
+                  moduleName = "SmartLock"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/trifon.sheykin/Documents/XCode/SL/SL/SocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "3440">
+               </Location>
+               <Location
+                  uuid = "2DF10CAE-7A53-4302-913D-6A70945BA0AB - 426fc26b48ab56b1"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SmartLock.SocketManager.stream(_: __C.NSStream, handle: __C.NSStreamEvent) -&gt; ()"
+                  moduleName = "SmartLock"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/trifon.sheykin/Documents/XCode/SL/SL/SocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "4320">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

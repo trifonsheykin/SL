@@ -218,6 +218,32 @@ class KeyDataHelper: DataHelperProtocol {
         return nil
     }
     
+    static func findByAcActivated(ac: Int64) throws -> Key? {
+        guard let DB = SQLiteDataStore.sharedInstance.BBDB else {
+            throw DataAccessError.Datastore_Connection_Error
+        }
+        
+        let query = table.filter(acActivated == ac)
+        let items = try DB.prepare(query)
+        for item in items {
+            return Key( rowId: item[rowId],
+                        keyTitle: item[keyTitle],
+                        aesKey: item[aesKey],
+                        ipAddress: item[ipAddress],
+                        doorIdString: item[doorIdString],
+                        doorIdOfBro: item[doorIdOfBro],
+                        userId: item[userId],
+                        userTag: item[userTag],
+                        startDoorTime: item[startDoorTime],
+                        stopDoorTime: item[stopDoorTime],
+                        accessPointSsid: item[accessPointSsid],
+                        acActivated: item[acActivated],
+                        acSecretWord: item[acSecretWord])
+        }
+    
+        return nil
+    }
+    
     
     
 }

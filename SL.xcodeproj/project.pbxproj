@@ -45,7 +45,6 @@
 		46F2024F22A2DF1400E0C63D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		46F2025122A2DF8800E0C63D /* SocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketManager.swift; sourceTree = "<group>"; };
 		46F2025322A2E28000E0C63D /* PresentersProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentersProtocol.swift; sourceTree = "<group>"; };
-		46F2025522C876D600E0C63D /* SL.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SL.entitlements; sourceTree = "<group>"; };
 		D0D1100647D3D2D2DFB64F5B /* Pods-SL.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SL.release.xcconfig"; path = "Target Support Files/Pods-SL/Pods-SL.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -99,7 +98,6 @@
 		46C8E75122995E22008ACD01 /* SL */ = {
 			isa = PBXGroup;
 			children = (
-				46F2025522C876D600E0C63D /* SL.entitlements */,
 				46F2024A22A2DE6800E0C63D /* Model */,
 				46C8E75222995E22008ACD01 /* AppDelegate.swift */,
 				46F2025322A2E28000E0C63D /* PresentersProtocol.swift */,
@@ -391,18 +389,22 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SL/SL.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = C3NC8ZZYR3;
 				INFOPLIST_FILE = SL/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.qwer.aestest;
+				MARKETING_VERSION = 2.0;
+				PRODUCT_BUNDLE_IDENTIFIER = store.smartlocks.smartlock;
 				PRODUCT_NAME = SmartLock;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -411,19 +413,23 @@
 			baseConfigurationReference = D0D1100647D3D2D2DFB64F5B /* Pods-SL.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = SL/SL.entitlements;
+				CODE_SIGN_ENTITLEMENTS = SL/SmartLockRelease.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = C3NC8ZZYR3;
 				INFOPLIST_FILE = SL/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.qwer.aestest;
+				MARKETING_VERSION = 2.0;
+				PRODUCT_BUNDLE_IDENTIFIER = store.smartlocks.smartlock;
 				PRODUCT_NAME = SmartLock;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
